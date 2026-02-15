@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Handler Dashboard</title>
+    <meta name="description" content="Real-time monitoring dashboard for automated incident handling">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="url(#gradient)" stroke-width="2" />
+                        <path d="M16 8V16L20 20" stroke="url(#gradient)" stroke-width="2" stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32">
+                                <stop offset="0%" stop-color="#667eea" />
+                                <stop offset="100%" stop-color="#764ba2" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>Incident Handler</h1>
+            </div>
+            <div class="status-indicator">
+                <div class="status-dot" id="connectionStatus"></div>
+                <span id="connectionText">Connecting...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- System Status Banner -->
+    <div class="system-banner" id="systemBanner" style="display: none;">
+        <div class="banner-content">
+            <span class="banner-icon">ℹ️</span>
+            <span class="banner-message" id="bannerMessage"></span>
+            <button class="banner-close" id="closeBanner">✕</button>
+        </div>
+    </div>
+
+    <!-- Error Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <!-- Statistics Cards -->
+        <section class="stats-section">
+            <div class="stat-card success-card">
+                <div class="stat-icon">✓</div>
+                <div class="stat-content">
+                    <div class="stat-label">Resolved Today</div>
+                    <div class="stat-value" id="statSuccess">0</div>
+                </div>
+            </div>
+            <div class="stat-card processing-card">
+                <div class="stat-icon">⟳</div>
+                <div class="stat-content">
+                    <div class="stat-label">Processing</div>
+                    <div class="stat-value" id="statProcessing">0</div>
+                </div>
+            </div>
+            <div class="stat-card skipped-card">
+                <div class="stat-icon">⊘</div>
+                <div class="stat-content">
+                    <div class="stat-label">Skipped Today</div>
+                    <div class="stat-value" id="statSkipped">0</div>
+                </div>
+            </div>
+            <div class="stat-card error-card">
+                <div class="stat-icon">✕</div>
+                <div class="stat-content">
+                    <div class="stat-label">Failed Today</div>
+                    <div class="stat-value" id="statFailed">0</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Live Feed -->
+            <section class="panel live-feed-panel">
+                <div class="panel-header">
+                    <h2>Live Processing Feed</h2>
+                    <button class="btn-clear" id="clearFeed">Clear</button>
+                </div>
+                <div class="live-feed" id="liveFeed">
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <p>Waiting for incidents to process...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Execution Logs -->
+            <section class="panel logs-panel">
+                <div class="panel-header">
+                    <h2>Execution Logs</h2>
+                    <button class="btn-clear" id="clearLogs">Clear</button>
+                </div>
+                <div class="logs-console" id="logsConsole">
+                    <div class="log-entry info">
+                        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+                        <span class="log-message">Dashboard initialized. Waiting for events...</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Processing History -->
+        <section class="panel history-panel">
+            <div class="panel-header">
+                <h2>Processing History</h2>
+                <div class="history-controls">
+                    <input type="text" id="searchHistory" placeholder="Search incidents..." class="search-input">
+                    <button class="btn-refresh" id="refreshHistory">↻ Refresh</button>
+                </div>
+            </div>
+            <div class="history-table-container">
+                <table class="history-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th>Incident #</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Processed At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr class="empty-row">
+                            <td colspan="5">No processing history yet</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

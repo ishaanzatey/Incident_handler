@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: incident_handler_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: incident_automation
+      POSTGRES_USER: incident_bot
+      POSTGRES_PASSWORD: ${PG_PASSWORD:-strongpassword}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U incident_bot -d incident_automation" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - incident_network
+
+  # Incident Handler Dashboard
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: incident_handler_dashboard
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # ServiceNow Configuration
+      SN_url: ${SN_url}
+      SN_username: ${SN_username}
+      SN_password: ${SN_password}
+      ASSIGNMENT_GROUP_SYS_ID: ${ASSIGNMENT_GROUP_SYS_ID}
+
+      # PostgreSQL Configuration
+      PG_HOST: postgres
+      PG_PORT: 5432
+      PG_DB: incident_automation
+      PG_USER: incident_bot
+      PG_PASSWORD: ${PG_PASSWORD:-strongpassword}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - incident_network
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/api/health')" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  incident_network:
+    driver: bridge

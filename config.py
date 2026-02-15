@@ -16,10 +16,8 @@ PG_DB = os.getenv("PG_DB")
 PG_USER = os.getenv("PG_USER")
 PG_PASSWORD = os.getenv("PG_PASSWORD")
 
-required = [
-    SN_url, SN_username, SN_password, ASSIGNMENT_GROUP_SYS_ID,
-    PG_HOST, PG_DB, PG_USER, PG_PASSWORD
-]
+# Validate only ServiceNow credentials (database is optional for dashboard)
+sn_required = [SN_url, SN_username, SN_password, ASSIGNMENT_GROUP_SYS_ID]
 
-if not all(required):
-    raise EnvironmentError("Missing required environment variables")
+if not all(sn_required):
+    raise EnvironmentError("Missing required ServiceNow environment variables")
